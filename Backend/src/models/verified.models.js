@@ -7,7 +7,8 @@ const verificationSchema = new Schema(
     coordinatorId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     verificationStatus: { type: String, enum: ["Pending", "Verified", "Rejected"], default: "Pending" },
    
-    verifiedAt: { type: Date },
+    verifiedAt: { type: Date,default: null },
+    verifiedTime :{type: Date, default: Date.now}
   },
   { timestamps: true }
 );

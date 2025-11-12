@@ -11,6 +11,7 @@ const studentSchema = new Schema(
     subjects: [{ type: String, required: true }],
     finalVerification : {type: mongoose.Schema.Types.ObjectId, ref: 'Verification' },
     hodVerified: { type: Boolean, default: false }, 
+    submission :[{ type: mongoose.Schema.Types.ObjectId, ref: 'Submission'}]
   },
   { timestamps: true }
 );
