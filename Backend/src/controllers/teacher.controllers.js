@@ -88,3 +88,10 @@ export const teacherForClass = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, teachers, "All teachers fetched Succesfully"));
 });
+
+export const teacherForSubjects = asyncHandler(async(req,res) => {
+  const user = req.user;
+  // Fetch all allocations for the logged-in teacher
+  const allocations = await Teacher.find({ teacherId: user._id }).lean(); 
+  return res.status(200).json(new ApiResponse(200, allocations, "Allocations fetched successfully"));
+})

@@ -2,6 +2,8 @@ import {asyncHandler} from '../utils/async-handler.js'
 import {ApiError} from '../utils/api-error.js' 
 import {ApiResponse} from "../utils/api-response.js"
 import Student from '../models/student.models.js'
+import Teacher from '../models/teacher.models.js';
+import Submission from '../models/submission.models.js';
 
 
 // get all student for submission display
@@ -10,7 +12,7 @@ export const getAllStudentsForSubmission = asyncHandler(async (req, res) => {
   const user = req.user; // logged-in teacher (from JWT middleware)
 
   // 1️⃣ Fetch teacher’s allocation details
-  const allocations = await TeacherAllocated.find({ teacherId: user._id });
+  const allocations = await Teacher.find({ teacherId: user._id });
   if (!allocations || allocations.length === 0) {
     throw new ApiError(404,"No students found for the teacher's allocations.");
   }
@@ -54,4 +56,32 @@ export const getAllStudentsForSubmission = asyncHandler(async (req, res) => {
   return res.status(200).json(new ApiResponse(200,{teacher,totalSubjects,assignedClasses},"Students fetched successfully"));
 });
 
- 
+export const postSubmission = asyncHandler(async(req,res) => {
+  const {studentId} = req.params
+  const user = req.user
+  const{subject,subjectType,className,division,batch,status} = req.body
+  const teacher = await Teacher.findOne({
+    teacherId: user._id,
+  })
+  if(!teacher) {
+    throw new ApiError(401, "Teacher not authorized for this subject/class/division/batch.");
+  }
+  if(teacher.subject !== subject || teacher.className !== className || teacher.division !== division || (teacher.subjectType === "Practical" && teacher.batch !== batch)) {
+    throw new ApiError(401, "Teacher not authorized for this subject/class/division/batch.");
+  }
+  const submission = await Submission.create({
+    studentId,
+    subject,
+    subjectType,
+    className,
+    division,
+    batch,
+    teacherId: user._id,
+    status
+  })
+
+  if(!submission){
+    throw new ApiError(500,"Error while creating submission")
+  }
+  return res.status(201).json(new ApiResponse(201, submission, "Submission created successfully"));
+}) 
