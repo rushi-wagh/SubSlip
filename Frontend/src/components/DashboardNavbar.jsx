@@ -1,6 +1,8 @@
 import React from "react";
 import { HiOutlineBell } from "react-icons/hi";
-
+import { useAuth } from "../context/AuthContext.jsx";
+import { roleRoute } from "../assets/roleRoute.jsx";
+import { NavLink } from "react-router-dom";
 /**
  * FacultyNavbar.jsx
  *
@@ -16,6 +18,7 @@ import { HiOutlineBell } from "react-icons/hi";
  */
 
 const DashboardNavbar = () => {
+  const { user } = useAuth();
   return (
     <header className="w-screen bg-white py-[1vw] px-[5vw]">
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 border-1 rounded-lg border-gray-400">
@@ -35,13 +38,23 @@ const DashboardNavbar = () => {
           {/* Center: Title (absolutely centered so it's visually centered regardless of left/right width) */}
           <div className="">
             <div className="text-sm sm:text-base font-medium text-slate-400 pointer-events-none">
-              Faculty Dashboard
+              {user.role == "ClassCoordinator" ? (
+                <>
+                  <NavLink
+                    to={`${roleRoute(user.role)}/ccpage`}
+                    className="text-blue-400 cursor-pointer"
+                  >
+                    {user.role} Dashboard
+                  </NavLink>
+                </>
+              ) : (
+                <>{user.role} Dashboard</>
+              )}
             </div>
           </div>
-
         </div>
       </div>
     </header>
   );
-}
+};
 export default DashboardNavbar;

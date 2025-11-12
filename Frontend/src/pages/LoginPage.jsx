@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 import { RiKey2Line } from "react-icons/ri";
 import { HiOutlineMail } from "react-icons/hi";
+import { Audio, TailSpin, ThreeDots } from "react-loader-spinner";
+import { Toaster } from "../../Toaster";
+import axios from "axios";
+import {useAuth} from "../context/AuthContext.jsx"
+import { useNavigate } from "react-router-dom";
+import {roleRoute} from "../assets/roleRoute.jsx"
+
 // SubmitEaseLogin.jsx
 // Single-file React component that reproduces the provided UI using TailwindCSS.
 // Default export a React component. This file intentionally contains only Tailwind classes
@@ -10,7 +17,41 @@ const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-
+  const [loading, setLoading] = useState(false);
+  const {login} = useAuth();
+  const navigate = useNavigate();
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    try {
+      const formData = {
+        email,
+        password,
+      };
+      setLoading(true);
+      const res = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/v1/users/login`,
+        formData,
+        {
+          withCredentials: true,
+        }
+      );
+      if (res.status === 200) {
+        console.log(res.data);
+        login(res.data.data);
+        setLoading(false);
+        Toaster(res.data.message, "success");
+        navigate(roleRoute(res.data.data.role));
+      } else {
+        setLoading(false);
+        console.log(res.data);
+        Toaster(res.data.message, "error");
+      }
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+      Toaster(error.message, "error");
+    }
+  };
   return (
     <div className="min-h-screen bg-[#f6f8fb] flex items-start sm:items-center justify-center py-12 sm:py-20">
       <div className="w-full max-w-md px-6">
@@ -38,7 +79,7 @@ const LoginPage = () => {
             </div>
           </div>
 
-          <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-4" onSubmit={submitHandler}>
             <div>
               <label
                 htmlFor="email"
@@ -99,7 +140,19 @@ const LoginPage = () => {
                 type="submit"
                 className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#1565ff] py-3 px-4 text-white font-medium shadow-sm hover:opacity-95"
               >
-                Login
+                {loading ? (
+                  <ThreeDots
+                    height="30"
+                    width="30"
+                    radius="9"
+                    color="white"
+                    ariaLabel="three-dots-loading"
+                    wrapperClass="custom-loader"
+                    visible={true}
+                  />
+                ) : (
+                  "Login"
+                )}
               </button>
             </div>
           </form>

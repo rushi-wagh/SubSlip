@@ -134,7 +134,7 @@ const HOD_Dashboard = () => {
   };
 
   return (
-    <div className="w-screen px-[2vw]">
+    <div className="w-screen px-[5vw] pt-[2vw]">
       {/* Top controls */}
       <div className="flex flex-col md:flex-row md:items-center gap-3 mb-4">
         <div className="flex items-center gap-3 flex-wrap">

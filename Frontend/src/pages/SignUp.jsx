@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { HiOutlineMail, HiOutlineUser, HiOutlineEye, HiOutlineEyeOff } from "react-icons/hi";
 import { RiKey2Line } from "react-icons/ri";
+import { Toaster } from "../../Toaster";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { ThreeDots } from "react-loader-spinner";
 
 const SignUp = () => {
   const [fullName, setFullName] = useState("");
@@ -8,8 +12,8 @@ const SignUp = () => {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
-
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   // simple password strength indicator (visual only to match UI)
   const strength = (() => {
     if (password.length > 10) return 3;
@@ -17,6 +21,59 @@ const SignUp = () => {
     if (password.length > 0) return 1;
     return 0;
   })();
+  const resetForm = () => {
+      setFullName("");
+      setEmail("");
+      setPassword("");
+      setConfirm("");
+    }
+
+  const submitHandler = async (e) => {
+      e.preventDefault();
+      console.log("hello")
+      const userData = {
+      name: `${fullName}`,
+      email,
+      password,
+    };
+    
+    try {
+      setLoading(true);
+      // Send POST request with credentials
+      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/v1/users/register`, userData, {
+        withCredentials: true,
+      });
+      console.log(res.data)
+      // Check response status
+      setLoading(false);
+      if (res.status === 201) {
+        
+        Toaster(res.data.message || "Account created successfully!", "success");
+        navigate("/login")
+        resetForm(); // optional: reset the form after success
+      } else {
+        Toaster(res.data.message || "Something went wrong!", "warning");
+      }
+    } catch (error) {
+      setLoading(false);
+      if (error.response) {
+        // Backend responded with a status outside 2xx
+        Toaster(
+          error.response.data.message || "Error creating account",
+          "error"
+        );
+      } else if (error.request) {
+        // Request was made but no response
+        Toaster("No response from server. Please try again.", "error");
+      } else {
+        // Other errors
+        Toaster(error.message || "An unexpected error occurred", "error");
+      }
+      console.error(error);
+    }
+
+    
+    }
 
   return (
     <div className="min-h-screen bg-[#f6f8fb] flex items-start sm:items-center justify-center py-12 sm:py-20">
@@ -40,7 +97,7 @@ const SignUp = () => {
 
 
 
-          <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
+          <form onSubmit={submitHandler} className="space-y-4">
             {/* Full name */}
             <div>
               <label className="block text-sm font-medium text-slate-700">Full name</label>
@@ -111,7 +168,15 @@ const SignUp = () => {
                 className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#1565ff] py-3 px-4 text-white font-medium shadow-sm hover:opacity-95"
               >
                 
-                Create Faculty Account
+                {loading?<ThreeDots
+  height="30"
+  width="30"
+  radius="9"
+  color="white"
+  ariaLabel="three-dots-loading"
+  wrapperClass="custom-loader"
+  visible={true}
+/>:"Create Faculty Account"}
               </button>
             </div>
 

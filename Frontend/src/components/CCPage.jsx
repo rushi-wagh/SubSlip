@@ -98,8 +98,8 @@ const CCPage = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#f6f8fb] p-6 md:p-8">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="w-screen min-h-screen">
+      <div className="w-full mx-auto space-y-6 px-[5vw]">
         {/* Summary cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-4">
           <div className="col-span-1 bg-white rounded-2xl border border-slate-100 p-4 shadow-sm">
