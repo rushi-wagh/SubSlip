@@ -122,7 +122,7 @@ export const updateVerificationStatus = asyncHandler(async(req,res) => {
       if(!allSubjectsDone){
         throw new ApiError(400,"All subjects are not marked as Completed")  
       }
-      const verification = await new Verification.create({
+      const verification = await  Verification.create({
         studentId: student._id,
         coordinatorId: coordinator._id,
         verificationStatus: "Verified",
@@ -131,8 +131,12 @@ export const updateVerificationStatus = asyncHandler(async(req,res) => {
         throw new ApiError(500,"Error while creating verification record")
       }
         student.finalVerification = verification._id
+        student.hodVerified = true
         await student.save({validateBeforeSave:false})
-        return res.status(200).json(new ApiResponse(200,student,"Verification status updated successfully"))
+        const studentData = await Student.findById({
+            _id: studentId
+        }).populate('finalVerification')
+        return res.status(200).json(new ApiResponse(200,studentData,"Verification status updated successfully"))
 })
 
 export const getVerifiedStudents = asyncHandler(async(req,res) => {

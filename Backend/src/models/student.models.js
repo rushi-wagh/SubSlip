@@ -9,7 +9,8 @@ const studentSchema = new Schema(
     division: { type: String, required: true },
     batch: { type: String, required: true },
     subjects: [{ type: String, required: true }],
-    finalVerification : {type: mongoose.Schema.Types.ObjectId, ref: 'Verification' }
+    finalVerification : {type: mongoose.Schema.Types.ObjectId, ref: 'Verification' },
+    hodVerified: { type: Boolean, default: false }, 
   },
   { timestamps: true }
 );
