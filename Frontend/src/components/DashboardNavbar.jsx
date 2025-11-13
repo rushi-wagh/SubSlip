@@ -5,7 +5,7 @@ import { roleRoute } from "../assets/roleRoute.jsx";
 import { Link, NavLink } from "react-router-dom";
 
 const DashboardNavbar = () => {
-  const { user } = useAuth();
+  const { user,logout } = useAuth();
 
   return (
     <header className="w-screen bg-white py-[1vw] px-[5vw]">
@@ -24,15 +24,23 @@ const DashboardNavbar = () => {
 
           {/* Center: Title (absolutely centered so it's visually centered regardless of left/right width) */}
           <div className="absolute inset-x-0 left-0 right-0 pointer-events-none flex justify-center">
-            <div className="text-sm sm:text-base font-medium text-slate-600 pointer-events-auto">
+            <div className="text-sm sm:text-base font-medium text-slate-600 pointer-events-auto flex gap-[2vw]">
               {user?.role ? (
                 user.role === "ClassCoordinator" ? (
-                  <Link
-                    to={`${roleRoute(user.role)}/ccpage`}
-                    className="text-blue-500 hover:underline"
-                  >
-                    {user.role} Dashboard
-                  </Link>
+                  <>
+                    <Link
+                      to={`${roleRoute(user.role)}/ccpage`}
+                      className="text-blue-500 hover:underline"
+                    >
+                      {user.role}
+                    </Link>
+                    <Link
+                      to={`${roleRoute(user.role)}`}
+                      className="text-blue-500 hover:underline"
+                    >
+                      Subject Teacher
+                    </Link>
+                  </>
                 ) : (
                   <span>{user.role} Dashboard</span>
                 )
@@ -44,12 +52,8 @@ const DashboardNavbar = () => {
 
           {/* Right: actions (bell / profile placeholder) */}
           <div className="ml-auto flex items-center gap-4">
-            <button
-              type="button"
-              aria-label="Notifications"
-              className="inline-flex items-center justify-center rounded-md p-2 hover:bg-slate-50"
-            >
-              <HiOutlineBell className="w-5 h-5 text-slate-600" />
+            <button onClick={logout} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all duration-200">
+              Log out
             </button>
           </div>
         </div>

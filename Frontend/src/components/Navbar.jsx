@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { HiOutlineMenu, HiOutlineX } from "react-icons/hi";
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { roleRoute } from "../assets/roleRoute";
 
 /**
  * Improved Navbar
@@ -14,7 +16,7 @@ import { NavLink } from "react-router-dom";
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
-
+  const {user} = useAuth();
   return (
     <>
       <div className="absolute top-0 left-0 w-screen h-[12vh] z-50">
@@ -57,7 +59,7 @@ const Navbar = () => {
             </div>
 
             {/* Right: actions */}
-            <div className="flex items-center gap-3">
+            {!user?<div className="flex items-center gap-3">
               {/* desktop actions */}
               <div className="hidden md:flex items-center gap-3">
                 <NavLink
@@ -89,7 +91,9 @@ const Navbar = () => {
                   <HiOutlineMenu className="w-6 h-6" />
                 )}
               </button>
-            </div>
+            </div>:<>
+                <NavLink to={roleRoute(user.role)} className="text-blue-400 cursor-pointer">{user.role}</NavLink>
+            </>}
           </nav>
 
           {/* Mobile panel */}

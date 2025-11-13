@@ -101,28 +101,28 @@ const CCPage = () => {
     <div className="w-screen min-h-screen">
       <div className="w-full mx-auto space-y-6 px-[5vw]">
         {/* Summary cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-          <div className="col-span-1 bg-white rounded-2xl border border-slate-100 p-4 shadow-sm">
+        <div className="flex flex-wrap justify-between">
+          <div className="w-full sm:w-1/3 lg:w-1/6 bg-white rounded-2xl border border-slate-100 p-4 shadow-sm">
             <div className="text-sm text-slate-500">Class</div>
             <div className="mt-2 font-semibold text-slate-800">CSE - TE A</div>
             <div className="text-xs text-slate-400 mt-1">Current section</div>
           </div>
 
-          <div className="col-span-1 bg-white rounded-2xl border border-slate-100 p-4 shadow-sm">
+          <div className="w-full sm:w-1/3 lg:w-1/6 bg-white rounded-2xl border border-slate-100 p-4 shadow-sm">
             <div className="text-sm text-slate-500">Total Students</div>
             <div className="mt-2 font-semibold text-slate-800 text-xl">
               {totalStudents}
             </div>
           </div>
 
-          <div className="col-span-1 bg-white rounded-2xl border border-slate-100 p-4 shadow-sm">
+          <div className="w-full sm:w-1/3 lg:w-1/6 bg-white rounded-2xl border border-slate-100 p-4 shadow-sm">
             <div className="text-sm text-slate-500">Subjects</div>
             <div className="mt-2 font-semibold text-slate-800 text-xl">
               {subjectsCount}
             </div>
           </div>
 
-          <div className="col-span-1 bg-white rounded-2xl border border-slate-100 p-4 shadow-sm">
+          <div className="w-full sm:w-1/3 lg:w-1/6 bg-white rounded-2xl border border-slate-100 p-4 shadow-sm">
             <div className="text-sm text-slate-500">Submitted</div>
             <div className="mt-2 font-semibold text-slate-800 text-xl">
               {submittedCount}
@@ -134,19 +134,14 @@ const CCPage = () => {
             </div>
           </div>
 
-          <div className="col-span-1 bg-white rounded-2xl border border-slate-100 p-4 shadow-sm">
+          <div className="w-full sm:w-1/3 lg:w-1/6 bg-white rounded-2xl border border-slate-100 p-4 shadow-sm">
             <div className="text-sm text-slate-500">Pending</div>
             <div className="mt-2 font-semibold text-slate-800 text-xl">
               {pendingCount}
             </div>
             <div className="mt-2">
               <span className="inline-flex items-center gap-2 bg-amber-400/10 text-amber-700 px-3 py-1 rounded-full text-sm font-medium">
-                <svg
-                  className="w-3 h-3"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  aria-hidden
-                >
+                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none">
                   <path
                     d="M12 8v5l3 3"
                     stroke="#b45309"
@@ -159,8 +154,6 @@ const CCPage = () => {
               </span>
             </div>
           </div>
-
-          <div className="hidden lg:block col-span-1" />
         </div>
 
         {/* Progress */}
@@ -325,11 +318,11 @@ const CCPage = () => {
           Terms • Privacy
         </div>
         <select defaultValue="Pick a color" className="select">
-  <option disabled={true}>Pick a color</option>
-  <option>Crimson</option>
-  <option>Amber</option>
-  <option>Velvet</option>
-</select>
+          <option disabled={true}>Pick a color</option>
+          <option>Crimson</option>
+          <option>Amber</option>
+          <option>Velvet</option>
+        </select>
       </div>
     </div>
   );

@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { HiOutlineMail, HiOutlineUser, HiOutlineEye, HiOutlineEyeOff } from "react-icons/hi";
 import { RiKey2Line } from "react-icons/ri";
 import { Toaster } from "../../Toaster";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ThreeDots } from "react-loader-spinner";
+import { roleRoute } from "../assets/roleRoute";
+import { useAuth } from "../context/AuthContext";
 
 const SignUp = () => {
   const [fullName, setFullName] = useState("");
@@ -13,8 +15,25 @@ const SignUp = () => {
   const [confirm, setConfirm] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const {user} = useAuth();
   const navigate = useNavigate();
-  // simple password strength indicator (visual only to match UI)
+  
+  useEffect(() => {
+      console.log("hello");
+        const storedUser = localStorage.getItem("user");
+    
+        // If no user → stay on login page
+        if (!storedUser) return;
+    
+        // User exists → redirect based on their role
+        const user = JSON.parse(storedUser);
+        const role = user.role;
+    
+        const route = roleRoute(role);
+        navigate(route, { replace: true });
+      }, []);
+    
+
   const strength = (() => {
     if (password.length > 10) return 3;
     if (password.length > 6) return 2;
@@ -71,7 +90,20 @@ const SignUp = () => {
       }
       console.error(error);
     }
-
+    useEffect(() => {
+      console.log("hello");
+        const storedUser = localStorage.getItem("user");
+    
+        // If no user → stay on login page
+        if (!storedUser) return;
+    
+        // User exists → redirect based on their role
+        const user = JSON.parse(storedUser);
+        const role = user.role;
+    
+        const route = roleRoute(role);
+        navigate(route, { replace: true });
+      }, []);
     
     }
 

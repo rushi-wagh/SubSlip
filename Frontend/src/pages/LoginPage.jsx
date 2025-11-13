@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { RiKey2Line } from "react-icons/ri";
 import { HiOutlineMail } from "react-icons/hi";
 import { Audio, TailSpin, ThreeDots } from "react-loader-spinner";
@@ -52,6 +52,19 @@ const LoginPage = () => {
       Toaster(error.message, "error");
     }
   };
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+
+    // If no user → stay on login page
+    if (!storedUser) return;
+
+    // User exists → redirect based on their role
+    const user = JSON.parse(storedUser);
+    const role = user.role;
+
+    const route = roleRoute(role);
+    navigate(route, { replace: true });
+  }, []);
   return (
     <div className="min-h-screen bg-[#f6f8fb] flex items-start sm:items-center justify-center py-12 sm:py-20">
       <div className="w-full max-w-md px-6">
