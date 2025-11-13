@@ -74,9 +74,9 @@ export const postStudents = asyncHandler(async(req,res) => {
  export const getStudentsByBatch = asyncHandler(async(req,res) => {
      const userRole = req.user.role
 
-    if(userRole !== 'ClassCoordinator'){
-        throw new ApiError(400,"Only Class Coordinator can view students by class and division"  )
-    }
+    // if(userRole !== 'ClassCoordinator'){
+    //     throw new ApiError(400,"Only Class Coordinator can view students by class and division"  )
+    // }
     const {className,division,batch} = req.body;
     if(!className || !division){
         throw new ApiError(400,"Class and Division are required")

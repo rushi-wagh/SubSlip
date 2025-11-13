@@ -7,6 +7,8 @@ import {
 } from "react-icons/hi";
 import { FiCheck } from "react-icons/fi";
 import { IoCloudDownloadOutline } from "react-icons/io5";
+import Select from "../components/Select";
+import SelectBox from "../components/SelectBox";
 
 /**
  * SubmissionMatrix.jsx
@@ -139,14 +141,7 @@ const HOD_Dashboard = () => {
       <div className="flex flex-col md:flex-row md:items-center gap-3 mb-4">
         <div className="flex items-center gap-3 flex-wrap">
           {/* Year chip */}
-          <div className="inline-flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm">
-            <svg className="w-5 h-5 text-slate-600" viewBox="0 0 24 24" fill="none" aria-hidden>
-              <path d="M3 7h18M7 3v4M17 3v4" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              <rect x="3" y="7" width="18" height="14" rx="2" stroke="#94a3b8" strokeWidth="1.25" />
-            </svg>
-            <span className="text-slate-700 font-medium">Year {year}</span>
-            <span className="text-xs text-slate-400 ml-2">SY</span>
-          </div>
+          <SelectBox placeholder={"Select the Class"}/>
 
           {/* Division chip */}
           <div className="inline-flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm">

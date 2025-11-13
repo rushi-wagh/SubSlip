@@ -1,7 +1,13 @@
+import React from "react";
 import axios from "axios";
 import { useEffect } from "react";
 
-const SidebarFilter = ({ subjects, setsubjects, selectedsubject, setselectedsubject }) => {
+const SidebarFilter = ({
+  subjects = [],
+  setsubjects = () => {},
+  selectedsubject = null,
+  setselectedsubject = () => {},
+}) => {
   useEffect(() => {
     const GetData = async () => {
       try {
@@ -9,13 +15,17 @@ const SidebarFilter = ({ subjects, setsubjects, selectedsubject, setselectedsubj
           `${import.meta.env.VITE_BACKEND_URL}/api/v1/teachers/get-subject-teacher`,
           { withCredentials: true }
         );
-        setsubjects(res.data.data);
+        // only call setter if it's a function
+        if (typeof setsubjects === "function") setsubjects(res.data?.data ?? []);
       } catch (error) {
         console.error(error);
       }
     };
     GetData();
   }, [setsubjects]);
+
+  // helper to normalize id fields (_id or id)
+  const selectedId = selectedsubject ? String(selectedsubject._id ?? selectedsubject.id ?? "") : "";
 
   return (
     <aside className="hidden md:flex md:flex-col w-80 lg:w-96 bg-transparent">
@@ -25,17 +35,16 @@ const SidebarFilter = ({ subjects, setsubjects, selectedsubject, setselectedsubj
         </h3>
 
         <div className="space-y-3">
-          {subjects.map((s) => {
-            const isSelected =
-              selectedsubject && String(selectedsubject.id) === String(s.id);
+          {(Array.isArray(subjects) ? subjects : []).map((s) => {
+            const sId = String(s._id ?? s.id ?? "");
+            const isSelected = selectedId !== "" && selectedId === sId;
+
             return (
               <label
-                key={s.id}
-                onClick={() => setselectedsubject(s)}
+                key={sId || Math.random()}
+                onClick={() => typeof setselectedsubject === "function" && setselectedsubject(s)}
                 className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer ${
-                  isSelected
-                    ? "border-[#2b7df7] bg-[#f1f8ff]"
-                    : "border-slate-100 bg-white"
+                  isSelected ? "border-[#2b7df7] bg-[#f1f8ff]" : "border-slate-100 bg-white"
                 }`}
               >
                 <input
@@ -47,10 +56,10 @@ const SidebarFilter = ({ subjects, setsubjects, selectedsubject, setselectedsubj
                 />
                 <div>
                   <div className="text-sm font-medium text-slate-800">
-                    {s.subject} ({s.subjectType})
+                    {s.subject} {s.subjectType ? `(${s.subjectType})` : ""}
                   </div>
                   <div className="text-xs text-slate-400 mt-1">
-                    {s.className} - {s.division}
+                    {s.className ?? "—"} {s.division ? `- ${s.division}` : ""}
                   </div>
                 </div>
               </label>

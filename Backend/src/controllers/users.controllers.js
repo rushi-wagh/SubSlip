@@ -7,8 +7,9 @@ import {ApiResponse} from "../utils/api-response.js"
 
 
 export const registerUser = asyncHandler(async(req,res) => {
-    const { name, email, password, role } = req.body;
-    if(!name || !email || !password || !role) {
+    console.log(req.body)
+    const { name, email, password } = req.body;
+    if(!name || !email || !password) {
         throw new ApiError(400,"All fields are required")
     }
     const existingUser = await User.findOne({email})
@@ -19,7 +20,6 @@ export const registerUser = asyncHandler(async(req,res) => {
         name,
         email,
         password,
-        role,
         className: req.body.className ? req.body.className : null,
         division: req.body.division ? req.body.division : null,
     })
