@@ -8,7 +8,7 @@ const teacherSchema = new Schema(
     className: { type: String, required: true },
     division: { type: String, required: true },
     subjectType: { type: String, enum: ["Theory", "Practical"], required: true },
-    batch :{type:String, required: true},
+    batch :{type:String},
     semester: { type: String },
     academicYear: { type: String },
   },

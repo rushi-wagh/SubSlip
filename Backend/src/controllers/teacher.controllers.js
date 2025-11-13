@@ -33,12 +33,15 @@ export const allocateTeacher = asyncHandler(async (req, res) => {
   const coordinator = req.user;
   const { teacherId } = req.params;
 
-  const { subject, className, division, subjectType, batch } = req.body;
+  const { subject, className, division, subjectType,batch } = req.body;
 
-  console.log(req.body);
+  // console.log(req.body);
 
-  if (!subject || !className || !division || !subjectType || !batch) {
+  if (!subject || !className || !division || !subjectType) {
     throw new ApiError(400, "All fields are required");
+  }
+  if (subjectType === "Practical" && !req.body.batch) {
+    throw new ApiError(400, "Batch is required for practical subjects");
   }
 
   if (

@@ -67,6 +67,18 @@ export const getAllStudentsForSubmission = asyncHandler(async (req, res) => {
 
 export const postSubmission = asyncHandler(async (req, res) => {
   const { studentId } = req.params;
+
+  const student = await Student.findById(studentId)
+  if (!student) {
+    throw new ApiError(404, "Student not found");
+  }
+  const subjects = student.subjects;
+  if (!subjects || subjects.length === 0) {
+    throw new ApiError(400, "Student has no subjects assigned");
+  }
+  if(!req.body.subject || !subjects.includes(req.body.subject)){
+    throw new ApiError(400, "Invalid or missing subject for this student");
+  }
   const user = req.user;
   const { subject, subjectType, className, division, batch, status } = req.body;
   const teacher = await Teacher.findOne({
@@ -78,10 +90,12 @@ export const postSubmission = asyncHandler(async (req, res) => {
       "Teacher not authorized for this subject/class/division/batch."
     );
   }
+  console.log(teacher)
   if (
     teacher.subject !== subject ||
     teacher.className !== className ||
     teacher.division !== division ||
+    teacher.subjectType !== subjectType ||
     (teacher.subjectType === "Practical" && teacher.batch !== batch)
   ) {
     throw new ApiError(
@@ -102,7 +116,19 @@ export const postSubmission = asyncHandler(async (req, res) => {
     },
     { new: true, upsert: true } // new = return updated doc, upsert = create if missing
   );
+  await Student.findByIdAndUpdate(studentId, {
+  $addToSet: { submission: submission._id }
+});
   return res
     .status(201)
     .json(new ApiResponse(201, submission, "Submission created successfully"));
 });
+
+
+export const getAllStudents = asyncHandler(async(req,res) => {
+  const{ className, division, batch} = req.body;
+  const students = await Student.find().select("name rollNo className division batch subjects submission").lean().populate("submission");
+  return res
+    .status(200)
+    .json(new ApiResponse(200, students, "Students fetched successfully"));
+})

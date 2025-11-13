@@ -64,17 +64,21 @@ export const getStudents = asyncHandler(async (req, res) => {
 export const getStudentsByClass = asyncHandler(async (req, res) => {
   const userRole = req.user.role;
 
-  if (userRole !== "ClassCoordinator") {
-    throw new ApiError(
-      400,
-      "Only Class Coordinator can view students by class and division"
-    );
+  const allowedRoles = ["ClassCoordinator","HOD"]
+  if (!allowedRoles.includes(userRole)) {
+    throw new ApiError(400, "Only Class Coordinator and HOD can view students by class and division");
   }
+  // if (userRole !== "ClassCoordinator") {
+  //   throw new ApiError(
+  //     400,
+  //     "Only Class Coordinator can view students by class and division"
+  //   );
+  // }
   const { className, division } = req.body;
   if (!className || !division) {
     throw new ApiError(400, "Class and Division are required");
   }
-  const students = await Student.find({ className, division });
+  const students = await Student.find({ className, division }).populate("finalVerification").populate("submission").select("name rollNo className division batch subjects finalVerification submission");
 
   if (!students) {
     throw new ApiError(404, "No students found");
@@ -133,10 +137,13 @@ export const updateVerificationStatus = asyncHandler(async (req, res) => {
       "You are not authorized to update verification status for this student"
     );
   }
+  
   const submissions = await Submission.find({ studentId });
   if (submissions.length === 0) {
     throw new ApiError(400, "No submissions found for this student");
   }
+  console.log("Number of submissions:", submissions.length)
+  console.log("Number of subjects:", student.subjects.length);
   const allSubjectsDone =
     submissions.length === student.subjects.length &&
     submissions.every((s) => s.status === "Completed");
@@ -147,13 +154,13 @@ export const updateVerificationStatus = asyncHandler(async (req, res) => {
     studentId: student._id,
     coordinatorId: coordinator._id,
     verificationStatus: "Verified",
-    verifiedAt
+    verifiedAt : Date.now()
   });
   if (!verification) {
     throw new ApiError(500, "Error while creating verification record");
   }
   student.finalVerification = verification._id;
-  student.hodVerified = true;
+  student.HodVerified = true;
   await student.save({ validateBeforeSave: false });
   const studentData = await Student.findById({
     _id: studentId,
