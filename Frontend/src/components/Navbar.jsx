@@ -1,34 +1,85 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { HiOutlineMenu, HiOutlineX } from "react-icons/hi";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { roleRoute } from "../assets/roleRoute";
-
-/**
- * Improved Navbar
- *
- * - Keeps the parent wrapper: <div className="absolute top-0 left-0 w-screen h-[12vh]">...
- * - Strict Tailwind classes only.
- * - Responsive: centered links on md+, hamburger on smaller screens.
- * - Accessible: aria attributes, logical focusable elements.
- * - Uses /assets/logo.png as the responsive brand image.
- */
+import { gsap } from "gsap";
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const {user} = useAuth();
+  const { user } = useAuth();
+
+  // Refs for animation targets
+  const navRef = useRef(null);
+  const logoRef = useRef(null);
+  const centerLinksRef = useRef(null);
+  const actionsRef = useRef(null);
+
+  useEffect(() => {
+    // Ensure elements exist
+    const logo = logoRef.current;
+    const center = centerLinksRef.current;
+    const actions = actionsRef.current;
+
+    // select all center link items
+    const centerItems = center ? Array.from(center.querySelectorAll("li")) : [];
+    // select all action items (buttons/links)
+    const actionItems = actions ? Array.from(actions.querySelectorAll(".action-item")) : [];
+
+    // Create timeline
+    const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
+
+    // 1) Logo drops from top
+    tl.fromTo(
+      logo,
+      { y: -40, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.6, delay: 0.1 }
+    );
+
+    // 2) Center nav links stagger in (only on desktop - if present)
+    if (centerItems.length) {
+      tl.fromTo(
+        centerItems,
+        { y: -10, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.45, stagger: 0.08 },
+        "-=0.2" // slight overlap with logo finishing
+      );
+    }
+
+    // 3) Action buttons (login/signup or dashboard)
+    if (actionItems.length) {
+      tl.fromTo(
+        actionItems,
+        { y: -6, opacity: 0, scale: 0.98 },
+        { y: 0, opacity: 1, scale: 1, duration: 0.4, stagger: 0.06 },
+        "-=0.15"
+      );
+    }
+
+    // cleanup on unmount
+    return () => {
+      tl.kill();
+    };
+  }, []); // run once on mount
+
   return (
     <>
       <div className="absolute top-0 left-0 w-screen h-[12vh] z-50">
         <div className="w-screen h-full px-4 py-3 sm:px-6 lg:px-8">
           <nav
+            ref={navRef}
             className="h-full flex items-center justify-between gap-4 bg-white/90 border border-slate-100 rounded-2xl px-4 py-2 shadow-sm"
             role="navigation"
             aria-label="Main navigation"
           >
             {/* Left: logo */}
             <div className="flex items-center h-full">
-              <a href="#" className="inline-flex items-center">
+              <a
+                href="#"
+                className="inline-flex items-center"
+                aria-label="SubmitEase home"
+                ref={logoRef} // logo target
+              >
                 <img
                   src="/assets/logo.png"
                   alt="SubmitEase"
@@ -39,61 +90,74 @@ const Navbar = () => {
 
             {/* Center: links - hidden on small screens */}
             <div className="hidden md:flex flex-1 justify-center">
-              <ul className="flex items-center gap-8 text-sm text-slate-700">
-                <li>
+              <ul
+                ref={centerLinksRef} // center links target
+                className="flex items-center gap-8 text-sm text-slate-700 opacity-100"
+              >
+                <li className="opacity-0">
+                  {/* start hidden (opacity changed by GSAP) */}
                   <a href="#" className="hover:text-slate-900 transition">
                     Home
                   </a>
                 </li>
-                <li>
-                  <a href="#" className="hover:text-slate-900 transition">
+                <li className="opacity-0">
+                  <a href="#HowItWorks" className="hover:text-slate-900 transition">
                     Features
                   </a>
                 </li>
-                <li>
+                <li className="opacity-0">
                   <a href="#" className="hover:text-slate-900 transition">
-                    About
+                    Team
                   </a>
                 </li>
               </ul>
             </div>
 
             {/* Right: actions */}
-            {!user?<div className="flex items-center gap-3">
-              {/* desktop actions */}
-              <div className="hidden md:flex items-center gap-3">
-                <NavLink
-                  to="/login"
-                  className="px-4 py-2 rounded-lg border border-slate-200 text-sm text-slate-700 hover:bg-slate-50 transition"
-                >
-                  Login
-                </NavLink>
+            {!user ? (
+              <div ref={actionsRef} className="flex items-center gap-3">
+                {/* desktop actions */}
+                <div className="hidden md:flex items-center gap-3">
+                  <NavLink
+                    to="/login"
+                    className="px-4 py-2 rounded-lg border border-slate-200 text-sm text-slate-700 hover:bg-slate-50 transition action-item opacity-0"
+                  >
+                    Login
+                  </NavLink>
 
-                <NavLink
-                  to="/signup"
-                  className="px-4 py-2 rounded-lg bg-[#2563eb] text-white text-sm shadow-sm hover:opacity-95 transition"
+                  <NavLink
+                    to="/signup"
+                    className="px-4 py-2 rounded-lg bg-[#2563eb] text-white text-sm shadow-sm hover:opacity-95 transition action-item opacity-0"
+                  >
+                    Signup
+                  </NavLink>
+                </div>
+
+                {/* mobile menu toggle */}
+                <button
+                  type="button"
+                  className="md:hidden inline-flex items-center justify-center rounded-md p-2 text-slate-700 hover:bg-slate-100 action-item opacity-0"
+                  aria-label={mobileOpen ? "Close menu" : "Open menu"}
+                  aria-expanded={mobileOpen}
+                  onClick={() => setMobileOpen((s) => !s)}
                 >
-                  Signup
+                  {mobileOpen ? (
+                    <HiOutlineX className="w-6 h-6" />
+                  ) : (
+                    <HiOutlineMenu className="w-6 h-6" />
+                  )}
+                </button>
+              </div>
+            ) : (
+              <div ref={actionsRef} className="flex items-center gap-3 pr-[2vw]">
+                <NavLink
+                  to={roleRoute(user.role)}
+                  className="text-blue-400 cursor-pointer action-item opacity-0"
+                >
+                  {user.role}
                 </NavLink>
               </div>
-
-              {/* mobile menu toggle */}
-              <button
-                type="button"
-                className="md:hidden inline-flex items-center justify-center rounded-md p-2 text-slate-700 hover:bg-slate-100"
-                aria-label={mobileOpen ? "Close menu" : "Open menu"}
-                aria-expanded={mobileOpen}
-                onClick={() => setMobileOpen((s) => !s)}
-              >
-                {mobileOpen ? (
-                  <HiOutlineX className="w-6 h-6" />
-                ) : (
-                  <HiOutlineMenu className="w-6 h-6" />
-                )}
-              </button>
-            </div>:<>
-                <NavLink to={roleRoute(user.role)} className="text-blue-400 cursor-pointer">{user.role}</NavLink>
-            </>}
+            )}
           </nav>
 
           {/* Mobile panel */}

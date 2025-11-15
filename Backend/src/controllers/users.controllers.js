@@ -53,3 +53,26 @@ export const login = asyncHandler(async(req,res) => {
     }).
     status(200).json(new ApiResponse(200,userData, "User logged in successfully"))
 })
+
+export const changePassword = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+  const { oldPassword, newPassword } = req.body;
+  if (!userId || !oldPassword || !newPassword) {
+    throw new ApiError(401, "All fields are required");
+  }
+  const user = await User.findById( userId );
+  if (!user) {
+    throw new ApiError(404, "No User found");
+  }
+  const isMatched = await user.comparePassword(oldPassword);
+  if (!isMatched) {
+    throw new ApiError(401, "You have entered wrong Password");
+  }
+  user.password = newPassword;
+  await user.save({ validateBeforeSave: false });
+  const user1 = await User.findById(user._id).select("-password");
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user1, "Password Changed Succesfully"));
+});

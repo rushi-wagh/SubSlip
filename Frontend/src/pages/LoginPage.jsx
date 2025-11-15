@@ -5,7 +5,7 @@ import { Audio, TailSpin, ThreeDots } from "react-loader-spinner";
 import { Toaster } from "../../Toaster";
 import axios from "axios";
 import {useAuth} from "../context/AuthContext.jsx"
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import {roleRoute} from "../assets/roleRoute.jsx"
 
 // SubmitEaseLogin.jsx
@@ -167,6 +167,7 @@ const LoginPage = () => {
                   "Login"
                 )}
               </button>
+              
             </div>
           </form>
         </div>

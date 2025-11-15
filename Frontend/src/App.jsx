@@ -16,6 +16,7 @@ import CCPage from "./components/CCPage";
 import HOD_Dashboard from "./pages/HOD_Dashboard";
 import { Toaster } from "react-hot-toast";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ChangePassword from "./pages/confirmPassword";
 
 function App() {
   const router = createBrowserRouter([
@@ -73,7 +74,10 @@ function App() {
           </ProtectedRoute>
         </>
       ),
-    },
+    },{
+      path:"/confirm-password",
+      element:<ChangePassword />
+    }
   ]);
 
   return (

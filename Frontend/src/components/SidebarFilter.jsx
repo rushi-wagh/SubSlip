@@ -1,6 +1,7 @@
 import React from "react";
 import axios from "axios";
 import { useEffect } from "react";
+import { MDM } from "../assets/roleRoute";
 
 const SidebarFilter = ({
   subjects = [],
@@ -25,7 +26,7 @@ const SidebarFilter = ({
   }, [setsubjects]);
 
   // helper to normalize id fields (_id or id)
-  const selectedId = selectedsubject ? String(selectedsubject._id ?? selectedsubject.id ?? "") : "";
+  const selectedId = selectedsubject ? String(selectedsubject._id) : "";
 
   return (
     <aside className="hidden md:flex md:flex-col w-80 lg:w-96 bg-transparent">
@@ -36,9 +37,8 @@ const SidebarFilter = ({
 
         <div className="space-y-3">
           {(Array.isArray(subjects) ? subjects : []).map((s) => {
-            const sId = String(s._id ?? s.id ?? "");
+            const sId = String(s._id);
             const isSelected = selectedId !== "" && selectedId === sId;
-
             return (
               <label
                 key={sId || Math.random()}
@@ -56,10 +56,11 @@ const SidebarFilter = ({
                 />
                 <div>
                   <div className="text-sm font-medium text-slate-800">
-                    {s.subject} {s.subjectType ? `(${s.subjectType})` : ""}
+                    {/* {s.subject} {s.subjectType ? `(${s.subjectType})` : ""} */}
+                    {MDM.includes(s.subject) ? `${s.subject} (Theory + Practical)`: `${s.subject} (${s.subjectType})`}
                   </div>
                   <div className="text-xs text-slate-400 mt-1">
-                    {s.className ?? "—"} {s.division ? `- ${s.division}` : ""}
+                    {s.className ?? "—"} {s.division ? `- ${s.batch ? s.batch : s.division}` : ""}
                   </div>
                 </div>
               </label>

@@ -1,6 +1,7 @@
 import React from "react";
 import { HiOutlineArrowRight } from "react-icons/hi";
 import { FiUpload, FiFileText, FiUsers } from "react-icons/fi";
+import { Link } from "react-router-dom";
 
 const HeroSection = () => {
   return (
@@ -22,13 +23,13 @@ const HeroSection = () => {
           </p>
 
           <div className="flex flex-wrap items-center gap-4">
-            <a
-              href="#"
+            <Link
+              href="/login"
               className="inline-flex items-center gap-2 rounded-lg bg-[#2563eb] px-5 py-3 text-base font-medium text-white shadow-sm hover:bg-[#1e4fd7] transition"
             >
               Login as Faculty
               <HiOutlineArrowRight className="w-4 h-4" />
-            </a>
+            </Link>
           </div>
 
           <div className="mt-6 flex flex-wrap gap-3">

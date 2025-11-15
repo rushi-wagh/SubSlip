@@ -13,7 +13,7 @@ import React from "react";
 
 const HowItWorks = () => {
   return (
-    <section className="w-full h-[50vh] bg-[#f6f8fb] pb-12">
+    <section className="w-full h-[50vh] bg-[#f6f8fb] pb-12" id="HowItWorks">
       <div className="max-w-6xl mx-auto px-6 sm:px-8">
         {/* Optional brand image replaced here */}
         <div className="flex justify-center mb-4">
